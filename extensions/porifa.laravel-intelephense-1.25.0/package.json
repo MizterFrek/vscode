@@ -1,0 +1,436 @@
+{
+	"name": "laravel-intelephense",
+	"displayName": "Laravel Intelephense",
+	"description": "Laraphense for Visual Studio Code is all in one (laravel blade snippets, laravel goto view, laravel goto components, laravel goto controller, laravel blade spacer)",
+	"keywords": [
+		"laravel",
+		"Laraphense",
+		"php intelephense laravel",
+		"laravel goto view",
+		"aravel goto components",
+		"laravel goto controller",
+		"code completion",
+		"laravel intellisense",
+		"laravel autocomplete"
+	],
+	"version": "1.25.0",
+	"publisher": "porifa",
+	"icon": "images/icon.png",
+	"repository": {
+		"url": "https://github.com/porifa/vscode-laraphense"
+	},
+	"bugs": {
+		"url": "https://github.com/porifa/vscode-laraphense/issues"
+	},
+	"engines": {
+		"vscode": "^1.72.0"
+	},
+	"categories": [
+		"Programming Languages",
+		"Formatters",
+		"Snippets",
+		"Other"
+	],
+	"activationEvents": [
+		"onLanguage:php",
+		"onLanguage:blade",
+		"onCommand:laraphense.sortImportedNamespaces",
+		"onCommand:laraphense.expand",
+		"onCommand:laraphense.createView",
+		"onCommand:laraphense.importAll",
+		"onCommand:laraphense.importNamespace",
+		"onCommand:laraphense.generateNamespace"
+	],
+	"main": "./dist/extension.js",
+	"contributes": {
+		"configurationDefaults": {
+			"[html]": {
+				"editor.autoClosingBrackets": "always"
+			},
+			"[blade]": {
+				"editor.autoClosingBrackets": "always"
+			}
+		},
+		"configuration": [
+			{
+				"title": "Laraphense",
+				"type": "object",
+				"properties": {
+					"laraphense.createViewEveryWhere": {
+						"type": "boolean",
+						"default": true,
+						"description": "Create View From any selection"
+					},
+					"laraphense.showMessageOnStatusBar": {
+						"type": "boolean",
+						"default": true,
+						"description": "show Message On Status Bar"
+					},
+					"laraphense.maxLinesCount": {
+						"type": "integer",
+						"default": 1000,
+						"description": "Maximum number of scanning rows"
+					},
+					"laraphense.viewRegex": {
+						"type": "string",
+						"default": "(?<=view\\(['\"]|.view:.?['\"]|View::make\\(['\"]|nest\\(['\"](.*)['\"],.?['\"]|@include\\(['\"]|@extends\\(['\"]|@component\\(['\"]|Inertia::render\\(['\"]|\\(component:.['\"])([^'\" \\>]+)|(?:<livewire:|\\<x-|\\<x-jet-|livewire\\(['\"])([^'\" \\>]+)",
+						"description": "Custom regex for matching strings"
+					},
+					"laraphense.viewCreateRegex": {
+						"type": "string",
+						"default": "(?<=view\\(['\"]|.view:.?['\"]|View::make\\(['\"]|nest\\(['\"](.*)['\"],.?['\"]|Inertia::render\\(['\"]|\\(component:.['\"])([^'\"]+)",
+						"description": "Custom regex for matching strings to auto suggest"
+					},
+					"laraphense.viewFolders": {
+						"type": "object",
+						"default": {
+							"default": "/resources/views",
+							"js": "/resources/js/Pages",
+							"livewire": "/resources/views/livewire",
+							"vendor": "/resources/views/vendor"
+						},
+						"items": {
+							"type": "string"
+						},
+						"minItems": 1,
+						"uniqueItems": true,
+						"description": "Multiple folders"
+					},
+					"laraphense.viewExtensions": {
+						"type": "array",
+						"default": [
+							".blade.php",
+							".vue"
+						],
+						"items": {
+							"type": "string"
+						},
+						"minItems": 1,
+						"uniqueItems": true,
+						"description": "Multiple extensions for view"
+					},
+					"laraphense.customValidationRules": {
+						"type": "object",
+						"default": {},
+						"description": "Custom validation rules snippets."
+					},
+					"laraphense.viewDirectorySeparator": {
+						"type": "string",
+						"default": ".",
+						"description": ". or /"
+					},
+					"laraphense.phpCommand": {
+						"type": "string",
+						"default": "php -r \"{code}\"",
+						"description": "PHP Command using to run PHP codes"
+					},
+					"laraphense.basePath": {
+						"type": "string",
+						"description": "Base path is used to read files."
+					},
+					"laraphense.excludeNamespaces": {
+						"type": "string",
+						"default": "**/node_modules/**",
+						"description": "Exclude glob pattern while finding files for Namespaces."
+					},
+					"laraphense.expandLeadingNamespaceSeparator": {
+						"type": "boolean",
+						"default": true,
+						"description": "Expand class with leading namespace separator"
+					},
+					"laraphense.autoSortAfterImport": {
+						"type": "boolean",
+						"default": true,
+						"description": "Auto sort after imports"
+					},
+					"laraphense.sortOnSave": {
+						"type": "boolean",
+						"default": false,
+						"description": "Auto sort when a file is saved"
+					},
+					"laraphense.basePathForCode": {
+						"type": "string",
+						"description": "This base path is used for require_once inside PHP code."
+					},
+					"laraphense.modelsPaths": {
+						"type": "array",
+						"default": [
+							"app",
+							"app/Models"
+						],
+						"description": "Path of models you put your model codes."
+					},
+					"laraphense.modelVariables": {
+						"type": "object",
+						"default": {
+							"user": "App\\Models\\User"
+						},
+						"description": "Variables that should provide model autocomplete."
+					},
+					"laraphense.modelAttributeCase": {
+						"type": "string",
+						"enum": [
+							"default",
+							"snake",
+							"camel"
+						],
+						"default": "default",
+						"description": "Change attribute name case to snake or camel."
+					},
+					"laraphense.modelAccessorCase": {
+						"type": "string",
+						"enum": [
+							"default",
+							"snake",
+							"camel"
+						],
+						"default": "snake",
+						"description": "Change accessor name case to snake or camel."
+					},
+					"laraphense.disableAssetCompletion": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable assets autocomplete set this to true."
+					},
+					"laraphense.disableAuthCompletion": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable auth autocomplete set this to true."
+					},
+					"laraphense.disableBladeCompletion": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable blade directives autocomplete set this to true."
+					},
+					"laraphense.disableConfigCompletion": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable config autocomplete set this to true."
+					},
+					"laraphense.disableControllerCompletion": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable controller autocomplete set this to true."
+					},
+					"laraphense.disableCurlyBracesSpacer": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable Curly Braces Spacer set this to true."
+					},
+					"laraphense.disableEloquentCompletion": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable eloquent autocomplete set this to true."
+					},
+					"laraphense.disableEnvCompletion": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable env autocomplete set this to true."
+					},
+					"laraphense.disableLivewireCompletion": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable livewire autocomplete set this to true."
+					},
+					"laraphense.disableMiddlewareCompletion": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable middleware autocomplete set this to true."
+					},
+					"laraphense.disableMixCompletion": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable mix autocomplete set this to true."
+					},
+					"laraphense.disableRouteCompletion": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable route autocomplete set this to true."
+					},
+					"laraphense.disableTranslationCompletion": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable Translation autocomplete set this to true."
+					},
+					"laraphense.disableValidationCompletion": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable Validation autocomplete set this to true."
+					},
+					"laraphense.disableViewCompletion": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable View autocomplete set this to true."
+					},
+					"laraphense.disableGoToView": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable Go To View set this to true."
+					},
+					"laraphense.disableGoToConfig": {
+						"type": "boolean",
+						"default": false,
+						"description": "If you want to disable Go To Config set this to true."
+					}
+				}
+			}
+		],
+		"commands": [
+			{
+				"command": "laraphense.createView",
+				"title": "Create View File",
+				"category": "laraphense"
+			},
+			{
+				"title": "Expand Class",
+				"command": "laraphense.expand",
+				"category": "laraphense"
+			},
+			{
+				"command": "laraphense.importNamespace",
+				"title": "Import Namespace",
+				"category": "laraphense"
+			},
+			{
+				"title": "Import All Classes",
+				"command": "laraphense.importAll",
+				"category": "laraphense"
+			},
+			{
+				"title": "Sort Imported Namespaces",
+				"command": "laraphense.sortImportedNamespaces",
+				"category": "laraphense"
+			},
+			{
+				"title": "Generate namespace for this file",
+				"command": "laraphense.generateNamespace",
+				"category": "laraphense"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "laraphense.importNamespace",
+				"key": "ctrl+alt+i",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "laraphense.importAll",
+				"key": "ctrl+alt+a",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "laraphense.expand",
+				"key": "ctrl+alt+e",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "laraphense.sortImportedNamespaces",
+				"key": "ctrl+alt+s",
+				"when": "editorTextFocus"
+			},
+			{
+				"command": "laraphense.generateNamespace",
+				"key": "ctrl+alt+g",
+				"when": "editorTextFocus"
+			}
+		],
+		"menus": {
+			"editor/context": [
+				{
+					"when": "editorLangId === php",
+					"command": "laraphense.expand",
+					"group": "0_laraphense@1"
+				},
+				{
+					"when": "editorLangId === php",
+					"command": "laraphense.importNamespace",
+					"group": "0_laraphense@2"
+				},
+				{
+					"when": "editorLangId === php",
+					"command": "laraphense.importAll",
+					"group": "0_laraphense@3"
+				},
+				{
+					"when": "editorLangId === php",
+					"command": "laraphense.sortImportedNamespaces",
+					"group": "0_laraphense@4"
+				},
+				{
+					"when": "editorLangId === php",
+					"command": "laraphense.generateNamespace",
+					"group": "0_laraphense@7"
+				}
+			]
+		},
+		"grammars": [
+			{
+				"language": "dotenv",
+				"scopeName": "source.env",
+				"path": "./syntaxes/env.tmLanguage.json"
+			}
+		],
+		"languages": [
+			{
+				"id": "dotenv",
+				"aliases": [
+					"Environment Variables",
+					"dotenv",
+					"env"
+				],
+				"extensions": [
+					".env",
+					".env.example",
+					".env.dev",
+					".env.test"
+				],
+				"configuration": "./language-configuration.json"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run package",
+		"compile": "webpack",
+		"watch": "webpack --watch",
+		"package": "webpack --mode production --devtool hidden-source-map",
+		"compile-tests": "tsc -p . --outDir out",
+		"watch-tests": "tsc -p . -w --outDir out",
+		"pretest": "npm run compile-tests && npm run compile && npm run lint",
+		"lint": "eslint src --ext ts",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/glob": "^8.0.0",
+		"@types/mkdirp": "^1.0.2",
+		"@types/mocha": "^10.0.0",
+		"@types/node": "16.x",
+		"@types/vscode": "^1.72.0",
+		"@typescript-eslint/eslint-plugin": "^5.38.1",
+		"@typescript-eslint/parser": "^5.38.1",
+		"@vscode/test-electron": "^2.1.5",
+		"eslint": "^8.24.0",
+		"glob": "^8.0.3",
+		"mocha": "^10.0.0",
+		"ts-loader": "^9.4.1",
+		"typescript": "^4.8.4",
+		"webpack": "^5.74.0",
+		"webpack-cli": "^4.10.0"
+	},
+	"dependencies": {
+		"mkdirp": "^1.0.4",
+		"php-parser": "^3.1.1"
+	},
+	"__metadata": {
+		"id": "0341bbe1-a3f3-4db8-963f-a2b3e73eb34c",
+		"publisherId": "4db5bbf7-c120-43eb-989b-ee2c3e240dbb",
+		"publisherDisplayName": "Porifa",
+		"targetPlatform": "undefined",
+		"isApplicationScoped": false,
+		"isPreReleaseVersion": false,
+		"hasPreReleaseVersion": false,
+		"installedTimestamp": 1729020909374,
+		"pinned": false,
+		"preRelease": false,
+		"source": "gallery"
+	}
+}
